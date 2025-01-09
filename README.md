@@ -258,6 +258,36 @@ Remember to star the repository if you find it useful!
 
 
 
+########################## THIS IS IS SPECIFICALLY FOR ANDROID CONFIG #######################
+
+[General]
+REPO_PATH = /storage/emulated/0/GitProjects/MyRepo
+FILE_PATHS = /storage/emulated/0/GitProjects/MyRepo/file1.txt, /storage/emulated/0/GitProjects/MyRepo/file2.txt
+BRANCH_NAME = main
+REMOTE_NAME = origin
+COMMIT_MESSAGE_PREFIX = Auto: 
+
+[Git]
+GIT_USER_NAME = Your Name
+GIT_USER_EMAIL = your.email@example.com
+
+[Notification]
+SMTP_SERVER = smtp.gmail.com
+SMTP_PORT = 587
+SMTP_USER = your.email@gmail.com
+SMTP_PASSWORD = your_app_password
+NOTIFICATION_EMAIL = recipient@example.com
+SMTP_USE_SSL = True
+
+
+######################################################################################################
+
+
+
+
+
+
+
 
                ## GENERAL REPOSITORY README.md
 

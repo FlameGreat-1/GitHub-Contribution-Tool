@@ -147,13 +147,6 @@ def update_file(file_path, dry_run=False):
             shutil.copy2(backup_path, file_path)
             return None
 
-def create_backup(file_path):
-    """Create a backup of the file."""
-    backup_path = f"{file_path}.bak"
-    shutil.copy2(file_path, backup_path)
-    logging.info(f"Created backup of '{file_path}' at '{backup_path}'")
-    return backup_path
-
 def commit_and_push(repo, file_paths, branch_name, remote_name, commit_message_prefix, new_values, dry_run=False):
     """Commit and push changes to the remote repository."""
     for attempt in range(MAX_RETRIES):
@@ -199,54 +192,12 @@ def send_notification(smtp_config, recipient, subject, body):
     except Exception as e:
         logging.error(f"Failed to send notification email: {str(e)}")
 
-
 def parse_arguments():
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(description="Automated Git commit script")
     parser.add_argument("--config", help="Path to custom config file", default=CONFIG_FILE)
     parser.add_argument("--dry-run", action="store_true", help="Perform a dry run without making actual changes")
     return parser.parse_args()
-
-def main(dry_run=False):
-    """Main function to automate the file update and Git commit."""
-    try:
-        config = load_config()
-        repo = ensure_repo_path(config["REPO_PATH"])
-        setup_git_config(repo, config["GIT_USER_NAME"], config["GIT_USER_EMAIL"])
-        
-        new_values = [update_file(file_path, dry_run=dry_run) for file_path in config["FILE_PATHS"]]
-        commit_and_push(
-            repo,
-            config["FILE_PATHS"],
-            config["BRANCH_NAME"],
-            config["REMOTE_NAME"],
-            config["COMMIT_MESSAGE_PREFIX"],
-            new_values,
-            dry_run=dry_run
-        )
-        
-        notification_body = "Script executed successfully. " + (
-            "Changes were simulated (dry run)." if dry_run else 
-            f"Updated files: {', '.join(config['FILE_PATHS'])}"
-        )
-        send_notification(
-            {k: config[k] for k in ['SMTP_SERVER', 'SMTP_PORT', 'SMTP_USER', 'SMTP_PASSWORD']},
-            config['NOTIFICATION_EMAIL'],
-            "Auto-commit script execution report",
-            notification_body
-        )
-        
-        logging.info("Script executed successfully.")
-    except Exception as e:
-        logging.error(f"An error occurred: {str(e)}")
-        
-        if 'NOTIFICATION_EMAIL' in config:
-            send_notification(
-                {k: config[k] for k in ['SMTP_SERVER', 'SMTP_PORT', 'SMTP_USER', 'SMTP_PASSWORD']},
-                config['NOTIFICATION_EMAIL'],
-                "Auto-commit script execution failed",
-                f"An error occurred: {str(e)}"
-            )
 
 def main(dry_run=False):
     """Main function to automate the file update and Git commit."""
@@ -314,3 +265,6 @@ def run_scheduled_task():
         print(f"An error occurred. Check the log file '{LOG_FILE}' for details.")
     finally:
         print("Exiting the script.")
+
+if __name__ == "__main__":
+    run_scheduled_task()
